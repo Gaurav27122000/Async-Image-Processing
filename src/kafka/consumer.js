@@ -47,10 +47,19 @@ async function shutdown() {
   }
 }
 
-process.on('SIGINT', 'SIGTERM', 'SIGQUIT', 'SIGKILL', async () => {
+process.on('SIGINT', async () => {
   console.log('Received SIGINT. Shutting down consumer...');
   await shutdown();
-  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM. Shutting down consumer...');
+  await shutdown();
+});
+
+process.on('SIGQUIT', async () => {
+  console.log('Received SIGQUIT. Shutting down consumer...');
+  await shutdown();
 });
 
 module.exports = {

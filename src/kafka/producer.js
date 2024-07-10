@@ -1,9 +1,9 @@
 const Kafka = require('node-rdkafka');
 const kafkaConfig = require('../config/kafka');
+const producer = new Kafka.Producer({ ...kafkaConfig, dr_cb: true });
 
 const sendMessage = async (topic, key, value) => {
   return new Promise(async (resolve, reject) => {
-    const producer = new Kafka.Producer({ ...kafkaConfig, dr_cb: true });
     await producer.connect();
 
     await producer.on('ready', () => {
@@ -26,6 +26,32 @@ const sendMessage = async (topic, key, value) => {
     });
   });
 };
+
+async function shutdown() {
+  try {
+    await producer.disconnect();
+    console.log('Producer disconnected successfully.');
+  } catch (e) {
+    console.error('Error while disconnecting producer:', e);
+  }
+}
+
+
+process.on('SIGINT', async () => {
+  console.log('Received SIGINT. Shutting down producer...');
+  await shutdown();
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM. Shutting down producer...');
+  await shutdown();
+});
+
+process.on('SIGQUIT', async () => {
+  console.log('Received SIGQUIT. Shutting down producer...');
+  await shutdown();
+});
+
 
 module.exports = {
   sendMessage,
