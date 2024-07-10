@@ -14,21 +14,18 @@ const compressImage = async (imageUrl, productName) => {
     });
     const originalImageBuffer = Buffer.from(response.data, 'binary');
 
-    // Get metadata to check the image format
     const metadata = await sharp(originalImageBuffer).metadata();
 
-    // Check if the image format is supported
     if (!['jpeg', 'png', 'webp', 'tiff'].includes(metadata.format)) {
       throw new Error(`Unsupported image format: ${metadata.format}`);
     }
 
-    // Compress the image
+    // Compressing the image
     const compressedImageBuffer = await sharp(originalImageBuffer)
       .resize({ width: Math.round(0.5 * metadata.width) })
       .jpeg({ quality: 80 })
       .toBuffer();
 
-    // Prepare to upload the compressed image to S3
     const compressedImageKey = `compressedImages/${productName}/${uuidv4()}.jpg`;
     const uploadParams = {
       Bucket: process.env.S3_BUCKET,
@@ -37,11 +34,10 @@ const compressImage = async (imageUrl, productName) => {
       ContentType: 'image/jpeg',
     };
 
-    // Upload the compressed image to S3
+    // Uploading the compressed image to S3
     const uploadCommand = new PutObjectCommand(uploadParams);
-    // await client.send(uploadCommand);
+    await client.send(uploadCommand);
 
-    // Return the URL of the compressed image
     return `https://${uploadParams.Bucket}.s3.amazonaws.com/${compressedImageKey}`;
   } catch (error) {
     console.error('Error compressing and uploading image:', error);
