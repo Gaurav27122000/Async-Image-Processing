@@ -1,30 +1,24 @@
-const kafka = require('node-rdkafka');
+const { Kafka } = require('kafkajs');
 const kafkaConfig = require('../config/kafka');
 const { addProducts } = require('../services/productsService');
 const { updateRequestStatus } = require('../services/requestStatusService');
 
-kafkaConfig['group.id'] = 'nodejs-group-1';
-const consumer = kafka.KafkaConsumer(
-  { ...kafkaConfig },
-  { 'auto.offset.reset': 'earliest' }
-);
+const kafka = new Kafka(kafkaConfig);
+
+// Create consumer
+const consumer = kafka.consumer({ groupId: 'nodejs-group-1', 'auto.offset.reset': 'earliest' });
+
 
 const runConsumer = async () => {
-  consumer.connect();
-  consumer.on('ready', () => {
-    console.log('Kafka Consumer is connected.');
-    consumer.subscribe(['kafka-csv-cluster']);
-    consumer.consume();
-  });
-
-  consumer.on('data', async (message) => {
-    const { requestId, metadata } = JSON.parse(message.value.toString());
-    await updateRequestStatus(requestId, 'Processing');
-    await addProducts(requestId, metadata);
-  });
-
-  consumer.on('event.error', (err) => {
-    handleError(err);
+  await consumer.connect();
+  await consumer.subscribe({ topic: 'kafka-csv-cluster', fromBeginning: true });
+  
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      const { requestId, metadata } = JSON.parse(message.value.toString());
+      await updateRequestStatus(requestId, 'Processing');
+      await addProducts(requestId, metadata);
+    },
   });
 
   function handleError(err) {
