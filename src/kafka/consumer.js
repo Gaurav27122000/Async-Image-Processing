@@ -39,30 +39,6 @@ const runConsumer = async () => {
   }
 };
 
-async function shutdown() {
-  try {
-    await consumer.disconnect();
-    console.log('Consumer disconnected successfully.');
-  } catch (e) {
-    console.error('Error while disconnecting consumer:', e);
-  }
-}
-
-process.on('SIGINT', async () => {
-  console.log('Received SIGINT. Shutting down consumer...');
-  await shutdown();
-});
-
-process.on('SIGTERM', async () => {
-  console.log('Received SIGTERM. Shutting down consumer...');
-  await shutdown();
-});
-
-process.on('SIGQUIT', async () => {
-  console.log('Received SIGQUIT. Shutting down consumer...');
-  await shutdown();
-});
-
 module.exports = {
   runConsumer,
 };

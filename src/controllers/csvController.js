@@ -11,14 +11,6 @@ const uploadCSV = async (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
-  runConsumer()
-  .then(async () => {
-    console.log('Kafka consumer started successfully.');
-  })
-  .catch((error) => {
-    console.error('Error starting Kafka consumer:', error);
-  });
-
   const requestId = uuidv4();
   const uploadParams = {
     Bucket: process.env.S3_BUCKET,
