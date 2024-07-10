@@ -3,7 +3,6 @@ node_modules/
 
 # Environment variables
 .env
-.zshrc
 
 # Optional npm cache directory
 .npm
@@ -24,3 +23,4 @@ yarn-error.log*
 # OS generated files
 .DS_Store
 Thumbs.db
+.zshrc
