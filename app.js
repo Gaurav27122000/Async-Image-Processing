@@ -15,11 +15,4 @@ app.use('/api', csvRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port:${port}`);
-  runConsumer()
-    .then(async () => {
-      console.log('Kafka consumer started successfully.');
-    })
-    .catch((error) => {
-      console.error('Error starting Kafka consumer:', error);
-    });
 });

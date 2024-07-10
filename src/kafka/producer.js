@@ -27,30 +27,6 @@ const sendMessage = async (topic, key, value) => {
   });
 };
 
-async function shutdown() {
-  try {
-    await producer.disconnect();
-    console.log('Producer disconnected successfully.');
-  } catch (e) {
-    console.error('Error while disconnecting producer:', e);
-  }
-}
-
-
-process.on('SIGINT', async () => {
-  console.log('Received SIGINT. Shutting down producer...');
-  await shutdown();
-});
-
-process.on('SIGTERM', async () => {
-  console.log('Received SIGTERM. Shutting down producer...');
-  await shutdown();
-});
-
-process.on('SIGQUIT', async () => {
-  console.log('Received SIGQUIT. Shutting down producer...');
-  await shutdown();
-});
 
 
 module.exports = {

@@ -4,11 +4,20 @@ const { sendMessage } = require('../kafka/producer');
 const extractMetadata = require('../utils/extractMetadata');
 const { v4: uuidv4 } = require('uuid');
 const { createRequestStatus, getRequestStatus } = require('../services/requestStatusService');
+const { runConsumer } = require('../kafka/consumer');
 
 const uploadCSV = async (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
+
+  runConsumer()
+  .then(async () => {
+    console.log('Kafka consumer started successfully.');
+  })
+  .catch((error) => {
+    console.error('Error starting Kafka consumer:', error);
+  });
 
   const requestId = uuidv4();
   const uploadParams = {

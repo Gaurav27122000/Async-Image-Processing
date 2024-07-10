@@ -3,12 +3,13 @@ const kafkaConfig = require('../config/kafka');
 const { addProducts } = require('../services/productsService');
 const { updateRequestStatus } = require('../services/requestStatusService');
 
+kafkaConfig['group.id'] = 'nodejs-group-1';
+const consumer = kafka.KafkaConsumer(
+  { ...kafkaConfig },
+  { 'auto.offset.reset': 'earliest' }
+);
+
 const runConsumer = async () => {
-  kafkaConfig['group.id'] = 'nodejs-group-1';
-  const consumer = kafka.KafkaConsumer(
-    { ...kafkaConfig },
-    { 'auto.offset.reset': 'earliest' }
-  );
   consumer.connect();
   consumer.on('ready', () => {
     console.log('Kafka Consumer is connected.');
