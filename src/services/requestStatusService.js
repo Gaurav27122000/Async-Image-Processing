@@ -1,4 +1,4 @@
-const RequestStatus = require('../models/requestModel');
+const RequestStatus = require('../models/requestModel.js');
 
 const createRequestStatus = async (requestId, status) => {
   try {
