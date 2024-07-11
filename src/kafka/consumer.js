@@ -1,18 +1,13 @@
 const { Kafka } = require('kafkajs');
-const kafkaConfig = require('../config/kafka');
+const { getConsumer } = require('../config/kafka');
 const { addProducts } = require('../services/productsService');
 const { updateRequestStatus } = require('../services/requestStatusService');
-
-const kafka = new Kafka(kafkaConfig);
-
-// Create consumer
-const consumer = kafka.consumer({ groupId: 'nodejs-group-1', 'auto.offset.reset': 'earliest' });
-
+const consumer = getConsumer();
 
 const runConsumer = async () => {
   await consumer.connect();
   await consumer.subscribe({ topic: 'kafka-csv-cluster', fromBeginning: true });
-  
+
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       const { requestId, metadata } = JSON.parse(message.value.toString());

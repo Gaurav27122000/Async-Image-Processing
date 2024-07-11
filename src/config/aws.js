@@ -8,4 +8,8 @@ const client = new S3Client({
   },
 });
 
-module.exports = { client };
+const getS3Client = () => {
+  return client;
+};
+
+module.exports = { getS3Client };

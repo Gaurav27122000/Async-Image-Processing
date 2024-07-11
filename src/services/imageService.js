@@ -1,8 +1,9 @@
 const axios = require('axios');
 const sharp = require('sharp');
 const { PutObjectCommand } = require('@aws-sdk/client-s3');
-const { client } = require('../config/aws');
+const { getS3Client } = require('../config/aws');
 const { v4: uuidv4 } = require('uuid');
+const client = getS3Client();
 
 const compressImage = async (imageUrl, productName) => {
   try {

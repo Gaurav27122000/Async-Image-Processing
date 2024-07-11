@@ -1,4 +1,4 @@
-const {Kafka} = require('kafkajs');
+const { Kafka } = require('kafkajs');
 
 const kafkaConfig = {
   clientId: 'rdkafka',
@@ -10,19 +10,19 @@ const kafkaConfig = {
     password: process.env.CONFLUENT_CLOUD_API_SECRET,
   },
 };
+const kafka = new Kafka(kafkaConfig);
+const producer = kafka.producer();
+const consumer = kafka.consumer({
+  groupId: 'nodejs-group-1',
+  'auto.offset.reset': 'earliest',
+});
 
-// const kafka = new Kafka.Producer({
-//   bootstrap:{
-//     servers:[process.env.CONFLUENT_CLOUD_BOOTSTRAP_SERVERS]
-//   },
-//   security:{
-//     protocol: 'SASL_SSL'
-//   },
-//   sasl: {
-//     mechanism: 'plain',
-//     username: process.env.CONFLUENT_CLOUD_API_KEY,
-//     password: process.env.CONFLUENT_CLOUD_API_SECRET,
-//   },
-// });
+const getProducer = () => {
+  return producer;
+};
 
-module.exports = kafkaConfig;
+const getConsumer = () => {
+  return consumer;
+};
+
+module.exports = { getProducer, getConsumer };

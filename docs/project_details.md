@@ -46,15 +46,18 @@ The Image Processing Backend project is designed to handle the upload, processin
 ## Flow of Data
 
 1. **CSV Upload**:
+
    - User uploads a CSV file via the `/api/upload` endpoint.
    - The file is processed, and metadata is extracted.
    - An entry is created in the MongoDB for tracking the request status.
 
 2. **Kafka Message**:
+
    - A message containing the request ID and file metadata is sent to a Kafka topic.
    - The Kafka consumer picks up the message for processing.
 
 3. **Image Processing**:
+
    - The consumer processes the message, compressing images listed in the CSV.
    - Compressed images are uploaded to AWS S3.
    - The MongoDB database is updated with the product data and compressed image URLs.
